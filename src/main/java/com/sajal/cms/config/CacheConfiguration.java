@@ -38,6 +38,10 @@ public class CacheConfiguration {
             cm.createCache(com.sajal.cms.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(com.sajal.cms.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.sajal.cms.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(com.sajal.cms.domain.Client.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sajal.cms.domain.Location.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sajal.cms.domain.Country.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sajal.cms.domain.EntityAuditEvent.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }
