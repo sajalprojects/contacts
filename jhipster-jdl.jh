@@ -1,0 +1,30 @@
+
+entity Client {
+	language Language
+	firstName String,
+	lastName String,
+	email String,
+	phoneNumber String
+    company String
+}
+
+enum Language {
+    FRENCH, ENGLISH, SPANISH
+}
+
+entity Location {
+	streetAddress String,
+	postalCode String,
+	city String,
+	stateProvince String
+}
+
+entity Country {
+	countryName String
+}
+relationship OneToOne {
+	Client{location} to Location
+}
+relationship OneToOne {
+	Location{country} to Country
+}
