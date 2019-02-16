@@ -1,0 +1,47 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="userExtra">
+            <h2><span>User Extra</span> {{userExtra.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Password Reset Date</span></dt>
+                <dd>
+                    <span>{{userExtra.passwordResetDate}}</span>
+                </dd>
+                <dt><span>Otp</span></dt>
+                <dd>
+                    <span>{{userExtra.otp}}</span>
+                </dd>
+                <dt><span>Login Date</span></dt>
+                <dd>
+                    <span>{{userExtra.loginDate}}</span>
+                </dd>
+                <dt><span>Lock Date</span></dt>
+                <dd>
+                    <span>{{userExtra.lockDate}}</span>
+                </dd>
+                <dt><span>Invalid Try</span></dt>
+                <dd>
+                    <span>{{userExtra.invalidTry}}</span>
+                </dd>
+                <dt><span>User</span></dt>
+                <dd>
+                    {{userExtra.user?.id}}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/user-extra', userExtra.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

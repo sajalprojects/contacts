@@ -1,0 +1,62 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-user-extra-heading">Create or edit a User Extra</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!userExtra.id">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="userExtra.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_passwordResetDate">Password Reset Date</label>
+                    <div class="d-flex">
+                        <input id="field_passwordResetDate" type="datetime-local" class="form-control" name="passwordResetDate" [(ngModel)]="passwordResetDate"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_otp">Otp</label>
+                    <input type="text" class="form-control" name="otp" id="field_otp"
+                        [(ngModel)]="userExtra.otp" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_loginDate">Login Date</label>
+                    <div class="d-flex">
+                        <input id="field_loginDate" type="datetime-local" class="form-control" name="loginDate" [(ngModel)]="loginDate"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_lockDate">Lock Date</label>
+                    <div class="d-flex">
+                        <input id="field_lockDate" type="datetime-local" class="form-control" name="lockDate" [(ngModel)]="lockDate"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_invalidTry">Invalid Try</label>
+                    <input type="number" class="form-control" name="invalidTry" id="field_invalidTry"
+                        [(ngModel)]="userExtra.invalidTry" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_user">User</label>
+                    <select class="form-control" id="field_user" name="user" [(ngModel)]="userExtra.user" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="userOption.id === userExtra.user?.id ? userExtra.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span>Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

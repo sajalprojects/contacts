@@ -1,0 +1,44 @@
+{
+    "name": "UserExtra",
+    "fields": [
+        {
+            "fieldName": "passwordResetDate",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "otp",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "loginDate",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "lockDate",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "invalidTry",
+            "fieldType": "Integer"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "userExtra"
+        }
+    ],
+    "changelogDate": "20190216100229",
+    "entityTableName": "user_extra",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

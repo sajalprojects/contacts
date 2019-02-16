@@ -173,6 +173,9 @@ public class AccountResource {
         if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
             throw new InvalidPasswordException();
         }
+        if (!checkPasswordHistory(keyAndPassword.getNewPassword(), keyAndPassword.getKey())) {
+            throw new PasswordAlreadyUsedException();
+        }
         Optional<User> user =
             userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
 
@@ -185,5 +188,9 @@ public class AccountResource {
         return !StringUtils.isEmpty(password) &&
             password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
             password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH;
+    }
+    
+    private boolean checkPasswordHistory(String password, String key) {
+    	return userService.checkPasswordHistoryWithKey(password, key );
     }
 }

@@ -19,12 +19,27 @@ entity Location {
 	stateProvince String
 }
 
+entity UserExtra {
+	passwordResetDate Instant,
+    otp String,
+    loginDate Instant,
+    lockDate Instant,
+    invalidTry Integer
+}
+
+entity UserPasswordHistory {
+    password String,
+}
+
 entity Country {
 	countryName String
 }
 relationship OneToOne {
-	Client{location} to Location
+	Client{location} to Location,
+    Location{country} to Country,
+    UserExtra{user} to User
 }
-relationship OneToOne {
-	Location{country} to Country
+
+relationship ManyToOne {
+	UserPasswordHistory{user} to User
 }

@@ -3,7 +3,11 @@ package com.sajal.cms.service;
 import com.sajal.cms.config.Constants;
 import com.sajal.cms.domain.Authority;
 import com.sajal.cms.domain.User;
+import com.sajal.cms.domain.UserExtra;
+import com.sajal.cms.domain.UserPasswordHistory;
 import com.sajal.cms.repository.AuthorityRepository;
+import com.sajal.cms.repository.UserExtraRepository;
+import com.sajal.cms.repository.UserPasswordHistoryRepository;
 import com.sajal.cms.repository.UserRepository;
 import com.sajal.cms.security.AuthoritiesConstants;
 import com.sajal.cms.security.SecurityUtils;
@@ -13,6 +17,7 @@ import com.sajal.cms.web.rest.errors.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +47,12 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+    
+    @Autowired
+    private UserExtraRepository userExtraRepository;
+    
+    @Autowired
+    private UserPasswordHistoryRepository userPasswordHistoryRepository;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
@@ -72,9 +83,58 @@ public class UserService {
                 user.setResetKey(null);
                 user.setResetDate(null);
                 this.clearUserCaches(user);
+                this.updateUserExtraPasswordResetDate(user);
+                this.createPasswordHistory(user, passwordEncoder.encode(newPassword));
                 return user;
             });
     }
+    
+    //added for password policy
+    private void updateUserExtraPasswordResetDate(User user) {
+    	Optional<UserExtra> userExtra = userExtraRepository.findOneByUserId(user.getId());
+    	UserExtra extra = new UserExtra();
+    	if(userExtra.isPresent()) {
+    		extra.setId(userExtra.get().getId());
+    	}
+		extra.setPasswordResetDate(Instant.now());
+		extra.setUser(user);
+    	userExtraRepository.save(extra);
+    }
+    
+    //added for password policy
+    private void createPasswordHistory(User user, String password) {
+    	UserPasswordHistory userPasswordHistory = new UserPasswordHistory();
+    	userPasswordHistory.setPassword(password);
+    	userPasswordHistory.setUser(user);
+    	userPasswordHistoryRepository.save(userPasswordHistory);
+    }
+    //added for password policy
+    public boolean checkPasswordHistoryWithKey(String newPassword, String key ) {
+    	log.debug("checking password history for reset key {}", key);
+    	Optional<User> user = userRepository.findOneByResetKey(key);
+    	log.debug("checking password history for user {}", user);
+    	if(user.isPresent()) {
+    		return this.checkPasswordHistory(newPassword, user.get());
+    	}else {
+    		return false;
+    	}
+    }
+    //added for password policy
+    public boolean checkPasswordHistory(String rawPassword, User user ) {
+    	List<UserPasswordHistory> history= userPasswordHistoryRepository.findTop3ByUserIdOrderByIdDesc(user.getId());
+    	log.debug("List of password {}", history);
+    	if(history.size() <= 0) {
+    		return true;
+    	}
+    	for(int i = 0; i < history.size(); i++) {
+    		if(passwordEncoder.matches(rawPassword, history.get(i).getPassword())) {
+    			log.debug("matched newpassword {} and oldpassword {}", rawPassword, history.get(i).getPassword());
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
 
     public Optional<User> requestPasswordReset(String mail) {
         return userRepository.findOneByEmailIgnoreCase(mail)
