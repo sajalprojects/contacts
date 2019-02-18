@@ -1,10 +1,13 @@
 package com.sajal.cms.security;
 
 import com.sajal.cms.domain.User;
+import com.sajal.cms.domain.UserExtra;
+import com.sajal.cms.repository.UserExtraRepository;
 import com.sajal.cms.repository.UserRepository;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,9 +27,14 @@ import java.util.stream.Collectors;
 public class DomainUserDetailsService implements UserDetailsService {
 
     private final Logger log = LoggerFactory.getLogger(DomainUserDetailsService.class);
+    
+    private final int PASSWORDLIFETIME = 7;
 
     private final UserRepository userRepository;
-
+    
+    @Autowired
+    private UserExtraRepository userExtraRepository;
+    
     public DomainUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -52,6 +61,20 @@ public class DomainUserDetailsService implements UserDetailsService {
         if (!user.getActivated()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
+        Optional<UserExtra> userExtraOption = userExtraRepository.findOneByUserId(user.getId());
+        if(userExtraOption.isPresent()) {
+        	UserExtra userExtra = userExtraOption.get();
+        	log.debug("userExtra details {}", userExtra);
+        	        	
+        	if (userExtra.getPasswordResetDate().isBefore(Instant.now().minusSeconds(PASSWORDLIFETIME * 86400))) {
+        		throw new UserNotActivatedException("User " + lowercaseLogin + " needs to reset password");
+        	}
+        	
+//        	if (userExtra.getLockDate().isAfter(Instant.now().minusSeconds(60))) {
+//        		throw new UserNotActivatedException("User " + lowercaseLogin + " is locked");
+//        	}
+        }
+        
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
             .map(authority -> new SimpleGrantedAuthority(authority.getName()))
             .collect(Collectors.toList());
