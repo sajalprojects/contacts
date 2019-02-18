@@ -29,6 +29,8 @@ public class DomainUserDetailsService implements UserDetailsService {
     private final Logger log = LoggerFactory.getLogger(DomainUserDetailsService.class);
     
     private final int PASSWORDLIFETIME = 7;
+    
+    private final int PASSWORDLOCKTIME = 60;
 
     private final UserRepository userRepository;
     
@@ -70,9 +72,9 @@ public class DomainUserDetailsService implements UserDetailsService {
         		throw new UserNotActivatedException("User " + lowercaseLogin + " needs to reset password");
         	}
         	
-//        	if (userExtra.getLockDate().isAfter(Instant.now().minusSeconds(60))) {
-//        		throw new UserNotActivatedException("User " + lowercaseLogin + " is locked");
-//        	}
+        	if (userExtra.getLockDate() != null && userExtra.getLockDate().isAfter(Instant.now().minusSeconds(PASSWORDLOCKTIME))) {
+        		throw new UserNotActivatedException("User " + lowercaseLogin + " is locked");
+        	}
         }
         
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
