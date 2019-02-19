@@ -38,8 +38,10 @@ public class UserJWTController {
     @Timed
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
 
+    	String usernameOtp = String.format("%s%s%s", loginVM.getUsername(),String.valueOf("||"),loginVM.getOtp());
+    	
         UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
+            new UsernamePasswordAuthenticationToken(usernameOtp, loginVM.getPassword());
 
         Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);

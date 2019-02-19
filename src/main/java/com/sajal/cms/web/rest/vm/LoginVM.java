@@ -11,12 +11,24 @@ public class LoginVM {
     @NotNull
     @Size(min = 1, max = 50)
     private String username;
-
+    
     @NotNull
+    @Size(min = 1, max = 10)
+    private String otp;
+
+	@NotNull
     @Size(min = ManagedUserVM.PASSWORD_MIN_LENGTH, max = ManagedUserVM.PASSWORD_MAX_LENGTH)
     private String password;
 
     private Boolean rememberMe;
+    
+    public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
 
     public String getUsername() {
         return username;

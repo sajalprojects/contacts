@@ -15,6 +15,7 @@ export class JhiLoginModalComponent implements AfterViewInit {
     password: string;
     rememberMe: boolean;
     username: string;
+    otp: string;
     credentials: any;
 
     constructor(
@@ -36,6 +37,7 @@ export class JhiLoginModalComponent implements AfterViewInit {
     cancel() {
         this.credentials = {
             username: null,
+            otp: null,
             password: null,
             rememberMe: true
         };
@@ -44,9 +46,11 @@ export class JhiLoginModalComponent implements AfterViewInit {
     }
 
     login() {
+        console.log('otp is ', this.otp);
         this.loginService
             .login({
                 username: this.username,
+                otp: this.otp,
                 password: this.password,
                 rememberMe: this.rememberMe
             })
